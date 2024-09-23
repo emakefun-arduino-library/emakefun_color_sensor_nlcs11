@@ -43,7 +43,8 @@ void setup() {
 }
 
 void loop() {
-  const auto rgb = g_color_sensor.Rgb();
-  Serial.println(String("r: ") + rgb.r + ", g: " + rgb.g + ", b: " + rgb.b);
+  const auto color = g_color_sensor.GetColor();
+  Serial.println(String("r: ") + color.r + ", g: " + color.g +
+                 ", b: " + color.b);
   delay(50);
 }

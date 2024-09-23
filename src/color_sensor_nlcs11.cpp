@@ -34,7 +34,7 @@ ColorSensorNlcs11::ErrorCode ColorSensorNlcs11::Initialize() {
   return ret;
 }
 
-ColorSensorNlcs11::Color ColorSensorNlcs11::Rgb() const {
+ColorSensorNlcs11::Color ColorSensorNlcs11::GetColor() const {
   Color color;
   uint16_t value[3] = {0};
 
@@ -52,11 +52,6 @@ ColorSensorNlcs11::Color ColorSensorNlcs11::Rgb() const {
     color.r = Map(value[0], 0, kMaxRawR, 0, 255);
     color.g = Map(value[1], 0, kMaxRawG, 0, 255);
     color.b = Map(value[2], 0, kMaxRawB, 0, 255);
-  } else {
-    // 若未成功读取到正确的数据，可以选择设置为0或者其他默认值
-    color.r = 0;  // 默认值处理
-    color.g = 0;  // 默认值处理
-    color.b = 0;  // 默认值处理
   }
   return color;
 }

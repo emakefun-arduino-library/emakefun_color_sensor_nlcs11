@@ -32,9 +32,9 @@ class ColorSensorNlcs11 {
 
   struct Color {
     /* data */
-    uint8_t r;
-    uint8_t g;
-    uint8_t b;
+    uint8_t r = 0;
+    uint8_t g = 0;
+    uint8_t b = 0;
   };
 
   explicit ColorSensorNlcs11(const uint8_t i2c_address = kDefaultI2cAddress,
@@ -49,7 +49,7 @@ class ColorSensorNlcs11 {
    */
   ErrorCode Initialize();
 
-  Color Rgb() const;
+  Color GetColor() const;
 
  private:
   ColorSensorNlcs11(const ColorSensorNlcs11&) = delete;
