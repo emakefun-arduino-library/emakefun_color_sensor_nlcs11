@@ -30,6 +30,13 @@ class ColorSensorNlcs11 {
     kUnknownError = 7,                    /**< 7：未知错误*/
   };
 
+  struct Color {
+    /* data */
+    uint8_t r;
+    uint8_t g;
+    uint8_t b;
+  };
+
   explicit ColorSensorNlcs11(const uint8_t i2c_address = kDefaultI2cAddress,
                              TwoWire& wire = Wire);
 
@@ -42,13 +49,7 @@ class ColorSensorNlcs11 {
    */
   ErrorCode Initialize();
 
-  uint8_t R() const;
-
-  uint8_t G() const;
-
-  uint8_t B() const;
-
-  void Rgb(uint8_t* r, uint8_t* g, uint8_t* b) const;
+  Color Rgb() const;
 
  private:
   ColorSensorNlcs11(const ColorSensorNlcs11&) = delete;

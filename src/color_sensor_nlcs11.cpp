@@ -34,47 +34,31 @@ ColorSensorNlcs11::ErrorCode ColorSensorNlcs11::Initialize() {
   return ret;
 }
 
-uint8_t ColorSensorNlcs11::R() const {
-  uint16_t value = 0;
+ColorSensorNlcs11::Color ColorSensorNlcs11::Rgb() const {
+  Color color;
+  uint16_t value[3] = {0};
+
   wire_.beginTransmission(i2c_address_);
   wire_.write(0xA0);
   wire_.endTransmission();
 
+  // 请求从传感器读取3个字节的数据
   wire_.requestFrom(i2c_address_, sizeof(value));
-  if (wire_.available() == sizeof(value)) {
-    wire_.readBytes(reinterpret_cast<uint8_t *>(&value), sizeof(value));
-  }
-  return Map(value, 0, kMaxRawR, 0, 255);
-}
 
-uint8_t ColorSensorNlcs11::G() const {
-  uint16_t value = 0;
-  wire_.beginTransmission(i2c_address_);
-  wire_.write(0xA2);
-  wire_.endTransmission();
-  wire_.requestFrom(i2c_address_, sizeof(value));
+  // 确认读取的数据大小是否正确
   if (wire_.available() == sizeof(value)) {
-    wire_.readBytes(reinterpret_cast<uint8_t *>(&value), sizeof(value));
-  }
-  return Map(value, 0, kMaxRawG, 0, 255);
-}
+    wire_.readBytes(reinterpret_cast<uint8_t *>(value), sizeof(value));
 
-uint8_t ColorSensorNlcs11::B() const {
-  uint16_t value = 0;
-  wire_.beginTransmission(i2c_address_);
-  wire_.write(0xA4);
-  wire_.endTransmission();
-  wire_.requestFrom(i2c_address_, sizeof(value));
-  if (wire_.available() == sizeof(value)) {
-    wire_.readBytes(reinterpret_cast<uint8_t *>(&value), sizeof(value));
+    color.r = Map(value[0], 0, kMaxRawR, 0, 255);
+    color.g = Map(value[1], 0, kMaxRawG, 0, 255);
+    color.b = Map(value[2], 0, kMaxRawB, 0, 255);
+  } else {
+    // 若未成功读取到正确的数据，可以选择设置为0或者其他默认值
+    color.r = 0;  // 默认值处理
+    color.g = 0;  // 默认值处理
+    color.b = 0;  // 默认值处理
   }
-  return Map(value, 0, kMaxRawB, 0, 255);
-}
-
-void ColorSensorNlcs11::Rgb(uint8_t *r, uint8_t *g, uint8_t *b) const {
-  *r = R();
-  *g = G();
-  *b = B();
+  return color;
 }
 
 }  // namespace emakefun

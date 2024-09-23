@@ -7,7 +7,6 @@
 #define INFINITE_LOOP_ON_FAILURE InfiniteLoopOnFailure(__FUNCTION__, __LINE__)
 
 namespace {
-uint8_t r, g, b;
 emakefun::ColorSensorNlcs11 g_color_sensor;
 void InfiniteLoopOnFailure(const char* function, const uint32_t line_number) {
   Serial.println(String(F("entering an infinite loop due to failure in ")) +
@@ -44,7 +43,7 @@ void setup() {
 }
 
 void loop() {
-  g_color_sensor.Rgb(&r, &g, &b);
-  Serial.println(String("r: ") + r + ", g: " + g + ", b: " + b);
+  const auto rgb = g_color_sensor.Rgb();
+  Serial.println(String("r: ") + rgb.r + ", g: " + rgb.g + ", b: " + rgb.b);
   delay(50);
 }
