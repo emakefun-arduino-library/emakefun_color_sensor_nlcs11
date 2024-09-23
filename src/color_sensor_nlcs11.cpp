@@ -8,8 +8,7 @@ constexpr uint16_t kMaxRawR = 500;
 constexpr uint16_t kMaxRawG = 1100;
 constexpr uint16_t kMaxRawB = 800;
 
-float Map(const float value, const float in_min, const float in_max,
-          const float out_min, const float out_max) {
+float Map(const float value, const float in_min, const float in_max, const float out_min, const float out_max) {
   if (value <= in_min) {
     return out_min;
   } else if (value >= in_max) {
@@ -20,8 +19,7 @@ float Map(const float value, const float in_min, const float in_max,
 }
 }  // namespace
 
-ColorSensorNlcs11::ColorSensorNlcs11(const uint8_t i2c_address, TwoWire &wire)
-    : i2c_address_(i2c_address), wire_(wire) {
+ColorSensorNlcs11::ColorSensorNlcs11(const uint8_t i2c_address, TwoWire &wire) : i2c_address_(i2c_address), wire_(wire) {
   // do somethings
 }
 
