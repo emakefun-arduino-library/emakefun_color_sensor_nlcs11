@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef EMAKEFUN_COLOR_SENSOR_H_
-#define EMAKEFUN_COLOR_SENSOR_H_
+#ifndef EMAKEFUN_COLOR_SENSOR_NLCS11_H_
+#define EMAKEFUN_COLOR_SENSOR_NLCS11_H_
 
 #include <Wire.h>
 #include <stdint.h>
