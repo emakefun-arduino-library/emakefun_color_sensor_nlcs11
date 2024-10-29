@@ -34,6 +34,7 @@ class ColorSensorNlcs11 {
     uint8_t r = 0;
     uint8_t g = 0;
     uint8_t b = 0;
+    uint8_t c = 0;
   };
 
   explicit ColorSensorNlcs11(const uint8_t i2c_address = kDefaultI2cAddress, TwoWire& wire = Wire);

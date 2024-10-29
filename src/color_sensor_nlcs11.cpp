@@ -34,7 +34,8 @@ ColorSensorNlcs11::ErrorCode ColorSensorNlcs11::Initialize() {
 
 ColorSensorNlcs11::Color ColorSensorNlcs11::GetColor() const {
   Color color;
-  uint16_t value[3] = {0};
+  uint16_t value[4] = {0};
+  uint16_t raw_r, raw_g, raw_b = 0;
 
   wire_.beginTransmission(i2c_address_);
   wire_.write(0xA0);
@@ -47,11 +48,20 @@ ColorSensorNlcs11::Color ColorSensorNlcs11::GetColor() const {
   if (wire_.available() == sizeof(value)) {
     wire_.readBytes(reinterpret_cast<uint8_t *>(value), sizeof(value));
 
-    color.r = Map(value[0], 0, kMaxRawR, 0, 255);
-    color.g = Map(value[1], 0, kMaxRawG, 0, 255);
-    color.b = Map(value[2], 0, kMaxRawB, 0, 255);
+    raw_r = value[0];
+    raw_g = value[1];
+    raw_b = value[2];
+    color.c = value[3];
+  }
+  if (color.c == 0) {
+    color.r = 0;
+    color.g = 0;
+    color.b = 0;
+  } else {
+    color.r = static_cast<uint16_t>((float)raw_r / color.c * 255);
+    color.g = static_cast<uint16_t>((float)raw_g / color.c * 255);
+    color.b = static_cast<uint16_t>((float)raw_b / color.c * 255);
   }
   return color;
 }
-
 }  // namespace emakefun
