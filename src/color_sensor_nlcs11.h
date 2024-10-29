@@ -31,10 +31,10 @@ class ColorSensorNlcs11 {
 
   struct Color {
     /* data */
-    uint8_t r = 0;
-    uint8_t g = 0;
-    uint8_t b = 0;
-    uint8_t c = 0;
+    uint16_t r = 0;
+    uint16_t g = 0;
+    uint16_t b = 0;
+    uint16_t c = 0;
   };
 
   explicit ColorSensorNlcs11(const uint8_t i2c_address = kDefaultI2cAddress, TwoWire& wire = Wire);

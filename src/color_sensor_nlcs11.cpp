@@ -7,16 +7,6 @@ namespace {
 constexpr uint16_t kMaxRawR = 500;
 constexpr uint16_t kMaxRawG = 1100;
 constexpr uint16_t kMaxRawB = 800;
-
-float Map(const float value, const float in_min, const float in_max, const float out_min, const float out_max) {
-  if (value <= in_min) {
-    return out_min;
-  } else if (value >= in_max) {
-    return out_max;
-  } else {
-    return (value - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-  }
-}
 }  // namespace
 
 ColorSensorNlcs11::ColorSensorNlcs11(const uint8_t i2c_address, TwoWire &wire) : i2c_address_(i2c_address), wire_(wire) {
@@ -41,7 +31,7 @@ ColorSensorNlcs11::Color ColorSensorNlcs11::GetColor() const {
   wire_.write(0xA0);
   wire_.endTransmission();
 
-  // 请求从传感器读取3个字节的数据
+  // 请求从传感器读取4个字节的数据
   wire_.requestFrom(i2c_address_, sizeof(value));
 
   // 确认读取的数据大小是否正确
