@@ -7,7 +7,9 @@
 #define INFINITE_LOOP_ON_FAILURE InfiniteLoopOnFailure(__FUNCTION__, __LINE__)
 
 namespace {
-emakefun::ColorSensorNlcs11 g_color_sensor;
+emakefun::ColorSensorNlcs11 g_color_sensor(emakefun::ColorSensorNlcs11::kGain1X,
+                                           emakefun::ColorSensorNlcs11::kIntegrationTime100ms);
+
 void InfiniteLoopOnFailure(const char* function, const uint32_t line_number) {
   Serial.println(String(F("entering an infinite loop due to failure in ")) + function + F(", at line number: ") + line_number);
   while (true) {

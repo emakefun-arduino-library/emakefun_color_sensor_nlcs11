@@ -29,6 +29,24 @@ class ColorSensorNlcs11 {
     kUnknownError = 7,                        /**< 7：未知错误*/
   };
 
+  enum Gain : uint8_t {
+    kGain1X,   /**<  No gain  */
+    kGain1p5X, /**<  1.5x gain  */
+    kGain2X,   /**<  2x gain */
+    kGain2p5X, /**<  2.5x gain */
+  };
+
+  enum IntegrationTime : uint8_t {
+    kIntegrationTime10ms,
+    kIntegrationTime20ms,
+    kIntegrationTime40ms,
+    kIntegrationTime80ms,
+    kIntegrationTime100ms,
+    kIntegrationTime200ms,
+    kIntegrationTime400ms,
+    kIntegrationTime800ms,
+  };
+
   struct Color {
     /* data */
     uint16_t r = 0;
@@ -37,9 +55,13 @@ class ColorSensorNlcs11 {
     uint16_t c = 0;
   };
 
-  explicit ColorSensorNlcs11(const uint8_t i2c_address = kDefaultI2cAddress, TwoWire& wire = Wire);
+  explicit ColorSensorNlcs11(const Gain gain,
+                             const IntegrationTime integration_time,
+                             const uint8_t i2c_address = kDefaultI2cAddress,
+                             TwoWire& wire = Wire);
 
-  explicit ColorSensorNlcs11(TwoWire& wire) : ColorSensorNlcs11(kDefaultI2cAddress, wire) {
+  explicit ColorSensorNlcs11(const Gain gain, const IntegrationTime integration_time, TwoWire& wire)
+      : ColorSensorNlcs11(gain, integration_time, kDefaultI2cAddress, wire) {
   }
 
   /**
@@ -56,6 +78,10 @@ class ColorSensorNlcs11 {
 
   const uint8_t i2c_address_ = kDefaultI2cAddress;
   TwoWire& wire_ = Wire;
+  const Gain gain_ = kGain1X;
+  const IntegrationTime integration_time_ = kIntegrationTime10ms;
+  mutable uint64_t last_read_time_ = 0;
+  mutable Color last_color_;
 };
 }  // namespace emakefun
 #endif

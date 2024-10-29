@@ -7,9 +7,15 @@ namespace {
 constexpr uint16_t kMaxRawR = 500;
 constexpr uint16_t kMaxRawG = 1100;
 constexpr uint16_t kMaxRawB = 800;
+
+constexpr uint16_t kIntegrationTimes[] = {10, 20, 40, 80, 100, 200, 400, 800};
 }  // namespace
 
-ColorSensorNlcs11::ColorSensorNlcs11(const uint8_t i2c_address, TwoWire &wire) : i2c_address_(i2c_address), wire_(wire) {
+ColorSensorNlcs11::ColorSensorNlcs11(const Gain gain,
+                                     const IntegrationTime integration_time,
+                                     const uint8_t i2c_address,
+                                     TwoWire& wire)
+    : i2c_address_(i2c_address), wire_(wire), gain_(gain), integration_time_(integration_time) {
   // do somethings
 }
 
@@ -18,40 +24,46 @@ ColorSensorNlcs11::ErrorCode ColorSensorNlcs11::Initialize() {
   wire_.beginTransmission(i2c_address_);
   wire_.write(0x80);
   wire_.write(0x03);
+  wire_.write(gain_ << 4 | integration_time_);
+  delay(10);
   ret = static_cast<ErrorCode>(wire_.endTransmission());
   return ret;
 }
 
 ColorSensorNlcs11::Color ColorSensorNlcs11::GetColor() const {
+  if (last_read_time_ == 0) {
+    last_read_time_ = millis();
+    return Color{};
+  }
+
+  if (millis() - last_read_time_ < kIntegrationTimes[integration_time_]) {
+    return last_color_;
+  }
+
+  last_read_time_ = millis();
+
   Color color;
-  uint16_t value[4] = {0};
-  uint16_t raw_r, raw_g, raw_b = 0;
 
   wire_.beginTransmission(i2c_address_);
   wire_.write(0xA0);
   wire_.endTransmission();
 
   // 请求从传感器读取4个字节的数据
-  wire_.requestFrom(i2c_address_, sizeof(value));
+  wire_.requestFrom(i2c_address_, sizeof(color));
 
   // 确认读取的数据大小是否正确
-  if (wire_.available() == sizeof(value)) {
-    wire_.readBytes(reinterpret_cast<uint8_t *>(value), sizeof(value));
+  if (wire_.available() == sizeof(color)) {
+    wire_.readBytes(reinterpret_cast<uint8_t*>(&color), sizeof(color));
+  }
 
-    raw_r = value[0];
-    raw_g = value[1];
-    raw_b = value[2];
-    color.c = value[3];
+  if (color.c != 0) {
+    color.r = static_cast<uint16_t>((float)color.r / color.c * 255);
+    color.g = static_cast<uint16_t>((float)color.g / color.c * 255);
+    color.b = static_cast<uint16_t>((float)color.b / color.c * 255);
+    last_color_ = color;
   }
-  if (color.c == 0) {
-    color.r = 0;
-    color.g = 0;
-    color.b = 0;
-  } else {
-    color.r = static_cast<uint16_t>((float)raw_r / color.c * 255);
-    color.g = static_cast<uint16_t>((float)raw_g / color.c * 255);
-    color.b = static_cast<uint16_t>((float)raw_b / color.c * 255);
-  }
-  return color;
+
+  return last_color_;
 }
+
 }  // namespace emakefun
