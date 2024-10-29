@@ -11,7 +11,7 @@ class ColorSensorNlcs11 {
  public:
   static constexpr uint32_t kVersionMajor = 2;
   static constexpr uint32_t kVersionMinor = 0;
-  static constexpr uint32_t kVersionPatch = 0;
+  static constexpr uint32_t kVersionPatch = 1;
   static constexpr uint8_t kDefaultI2cAddress = 0x43;
 
   /**
