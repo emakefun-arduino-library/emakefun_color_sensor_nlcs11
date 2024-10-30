@@ -11,7 +11,7 @@ class ColorSensorNlcs11 {
  public:
   static constexpr uint32_t kVersionMajor = 2;
   static constexpr uint32_t kVersionMinor = 0;
-  static constexpr uint32_t kVersionPatch = 1;
+  static constexpr uint32_t kVersionPatch = 2;
   static constexpr uint8_t kDefaultI2cAddress = 0x43;
 
   /**
@@ -70,7 +70,7 @@ class ColorSensorNlcs11 {
    */
   ErrorCode Initialize();
 
-  Color GetColor() const;
+  bool GetColor(Color* const color) const;
 
  private:
   ColorSensorNlcs11(const ColorSensorNlcs11&) = delete;
@@ -81,7 +81,7 @@ class ColorSensorNlcs11 {
   const Gain gain_ = kGain1X;
   const IntegrationTime integration_time_ = kIntegrationTime10ms;
   mutable uint64_t last_read_time_ = 0;
-  mutable Color last_color_;
+  // mutable Color last_color_;
 };
 }  // namespace emakefun
 #endif

@@ -30,40 +30,44 @@ ColorSensorNlcs11::ErrorCode ColorSensorNlcs11::Initialize() {
   return ret;
 }
 
-ColorSensorNlcs11::Color ColorSensorNlcs11::GetColor() const {
+bool ColorSensorNlcs11::GetColor(Color* const color) const {
+  if (color == nullptr) {
+    return false;
+  }
+
   if (last_read_time_ == 0) {
     last_read_time_ = millis();
-    return Color{};
+    return false;
   }
 
   if (millis() - last_read_time_ < kIntegrationTimes[integration_time_]) {
-    return last_color_;
+    return false;
   }
 
   last_read_time_ = millis();
-
-  Color color;
 
   wire_.beginTransmission(i2c_address_);
   wire_.write(0xA0);
   wire_.endTransmission();
 
   // 请求从传感器读取4个字节的数据
-  wire_.requestFrom(i2c_address_, sizeof(color));
+  wire_.requestFrom(i2c_address_, sizeof(*color));
 
   // 确认读取的数据大小是否正确
-  if (wire_.available() == sizeof(color)) {
-    wire_.readBytes(reinterpret_cast<uint8_t*>(&color), sizeof(color));
+  if (wire_.available() == sizeof(*color)) {
+    wire_.readBytes(reinterpret_cast<uint8_t*>(color), sizeof(*color));
   }
 
-  if (color.c != 0) {
-    color.r = static_cast<uint16_t>((float)color.r / color.c * 255);
-    color.g = static_cast<uint16_t>((float)color.g / color.c * 255);
-    color.b = static_cast<uint16_t>((float)color.b / color.c * 255);
-    last_color_ = color;
+  if (color->c == 0) {
+    *color = Color{};
+    return false;
   }
 
-  return last_color_;
+  color->r = static_cast<uint16_t>((float)color->r / color->c * 255);
+  color->g = static_cast<uint16_t>((float)color->g / color->c * 255);
+  color->b = static_cast<uint16_t>((float)color->b / color->c * 255);
+
+  return true;
 }
 
 }  // namespace emakefun

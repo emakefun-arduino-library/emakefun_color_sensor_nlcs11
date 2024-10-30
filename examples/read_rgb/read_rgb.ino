@@ -8,7 +8,7 @@
 
 namespace {
 emakefun::ColorSensorNlcs11 g_color_sensor(emakefun::ColorSensorNlcs11::kGain1X,
-                                           emakefun::ColorSensorNlcs11::kIntegrationTime100ms);
+                                           emakefun::ColorSensorNlcs11::kIntegrationTime10ms);
 
 void InfiniteLoopOnFailure(const char* function, const uint32_t line_number) {
   Serial.println(String(F("entering an infinite loop due to failure in ")) + function + F(", at line number: ") + line_number);
@@ -41,7 +41,9 @@ void setup() {
 }
 
 void loop() {
-  const auto color = g_color_sensor.GetColor();
-  Serial.println(String("r: ") + color.r + ", g: " + color.g + ", b: " + color.b);
+  emakefun::ColorSensorNlcs11::Color color;
+  if (g_color_sensor.GetColor(&color)) {
+    Serial.println(String("r: ") + color.r + ", g: " + color.g + ", b: " + color.b);
+  }
   delay(50);
 }
