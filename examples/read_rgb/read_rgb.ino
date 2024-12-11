@@ -45,5 +45,6 @@ void loop() {
   if (g_color_sensor.GetColor(&color)) {
     Serial.println(String("r: ") + color.r + ", g: " + color.g + ", b: " + color.b);
   }
+  Serial.println(color.c);
   delay(50);
 }

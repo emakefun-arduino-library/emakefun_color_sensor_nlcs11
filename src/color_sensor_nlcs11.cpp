@@ -4,10 +4,6 @@
 
 namespace emakefun {
 namespace {
-constexpr uint16_t kMaxRawR = 500;
-constexpr uint16_t kMaxRawG = 1100;
-constexpr uint16_t kMaxRawB = 800;
-
 constexpr uint16_t kIntegrationTimes[] = {10, 20, 40, 80, 100, 200, 400, 800};
 }  // namespace
 
@@ -25,7 +21,6 @@ ColorSensorNlcs11::ErrorCode ColorSensorNlcs11::Initialize() {
   wire_.write(0x80);
   wire_.write(0x03);
   wire_.write(gain_ << 4 | integration_time_);
-  delay(10);
   ret = static_cast<ErrorCode>(wire_.endTransmission());
   return ret;
 }
@@ -56,6 +51,9 @@ bool ColorSensorNlcs11::GetColor(Color* const color) const {
   // 确认读取的数据大小是否正确
   if (wire_.available() == sizeof(*color)) {
     wire_.readBytes(reinterpret_cast<uint8_t*>(color), sizeof(*color));
+  } else {
+    *color = Color{};
+    return false;
   }
 
   if (color->c == 0) {
